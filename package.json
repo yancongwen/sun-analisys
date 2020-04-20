@@ -3,12 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "core-js": "^3.6.4",
+    "earcut": "2.2.2",
+    "stats.js": "0.17.0",
+    "three": "0.115.0",
     "vue": "^2.6.11"
   },
   "devDependencies": {
