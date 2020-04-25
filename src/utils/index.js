@@ -73,6 +73,12 @@ function getDeclination(date) {
   return result
 }
 
+// 计算正午时刻太阳高度角（单位为弧度）
+function getSunLightHeightRad(lat, date) {
+  const declination = getDeclination(date)
+  return Math.PI / 2 - lat + declination
+}
+
 // 计算昼长
 function getDayLength(date, lat) {
   let d = getDeclination(date)
@@ -88,7 +94,7 @@ function getSunTime(lon, lat, date, zone = 8, fmt = 'hh:mm:ss') {
   let noonTime = timeFormat(noonTimeNum)
   let riseTime = timeFormat(noonTimeNum - dayLength / 2, fmt)
   let setTime = timeFormat(noonTimeNum + dayLength / 2, fmt)
-  return { riseTime, setTime, noonTime, dayLength }
+  return { riseTime, setTime, noonTime, noonTimeNum, dayLength }
 }
 
 // 角度转弧度
@@ -124,6 +130,7 @@ export default {
   timeFormat,
   getDays,
   getDeclination,
+  getSunLightHeightRad,
   getDayLength,
   getSunTime,
   deg2rad,
