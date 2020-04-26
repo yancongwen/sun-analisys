@@ -244,6 +244,9 @@ export default {
       display: flex;
       justify-content: space-around;
       margin: 10px 0;
+      .btn {
+        font-size: 13px;
+      }
       .active {
         border: none;
         color: #fff;

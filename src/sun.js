@@ -68,8 +68,8 @@ export default class Sun {
     const targetRoateRad = Math.PI * (this._time - this._noonTimeNum) / 12
     const rotateRad = targetRoateRad - this._currentRotateRad
     const earthAxisVector3 = new THREE.Vector3(0, Math.tan(this._lat), -1) // 地轴方向向量
-    rotateAboutWorldAxis(this._sunMesh, earthAxisVector3, rotateRad)
-    rotateAboutWorldAxis(this._directionalLight, earthAxisVector3, rotateRad)
+    rotateAboutWorldAxis(this._sunMesh, earthAxisVector3, -rotateRad)
+    rotateAboutWorldAxis(this._directionalLight, earthAxisVector3, -rotateRad)
     this._currentRotateRad = targetRoateRad
   }
 
