@@ -1,4 +1,5 @@
 # 光照分析
+![Build and Deploy](https://github.com/yancongwen/sun-analisys/workflows/Build%20and%20Deploy/badge.svg?branch=master)
 
 ## 相关概念
 

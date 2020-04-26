@@ -1,4 +1,4 @@
-name: GitHub Actions Build and Deploy Demo
+name: Build and Deploy
 on:
   push:
     branches:
@@ -15,5 +15,5 @@ jobs:
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages
-        FOLDER: build
+        FOLDER: dist
         BUILD_SCRIPT: npm install && npm run build
