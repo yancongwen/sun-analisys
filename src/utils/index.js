@@ -2,7 +2,6 @@
  * 将 Date 转化为指定格式的String
  */
 function dateFormat(date, fmt) {
-  console.log(date.getDate())
   var o = {
     'M+': date.getMonth() + 1,
     'd+': date.getDate(),
@@ -30,7 +29,7 @@ function dateFormat(date, fmt) {
 }
 
 // 时间转换
-function timeFormat(value, fmt = 'hh:mm:ss') {
+function timeFormat(value, fmt = 'hh:mm') {
   let h = Math.floor(value)
   let m = Math.floor(value * 60 - h * 60)
   let s = Math.floor(value * 60 * 60 - h * 60 * 60 - m * 60)
