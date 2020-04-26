@@ -30,5 +30,6 @@
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "homepage": "https://yancongwen.github.io/sun-analysis"
 }
