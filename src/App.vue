@@ -39,6 +39,7 @@
           @click="choseDate(item.date)">{{item.name}}</van-button>
       </div>
     </div>
+    <div class="loading" v-if="!loaded"></div>
     <van-calendar v-model="showCalendar" :min-date="minDate" :max-date="maxDate" @confirm="onChoseDate" />
   </div>
 </template>
@@ -64,6 +65,7 @@ export default {
       maxDate: new Date(2020, 12, 31),
       showCalendar: false,
       playing: false,
+      loaded: false,
       dates: [
         {
           name: '大寒',
@@ -113,8 +115,9 @@ export default {
     })
     sun.init()
     setTimeout(() => {
+      this.loaded = true
       this.play()
-    }, 500)
+    }, 3000)
   },
   methods: {
     onChoseDate(val) {

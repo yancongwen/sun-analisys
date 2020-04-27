@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import { Calendar, Slider, Icon, Button } from 'vant'
 import 'vant/lib/index.css'
+import './styles/index.css'
 
 Vue.use(Calendar)
 Vue.use(Slider)

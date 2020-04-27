@@ -1,0 +1,126 @@
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background-color: #313538;
+  /* background-image: radial-gradient(circle farthest-corner at center,#555a5f 0,#1c1e20 100%); */
+}
+.loading::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  width: 1rem;
+  height: 1rem;
+  color: #fff;
+  border-radius: 50%;
+  text-indent: -9999em;
+  animation: load-effect 1s infinite linear;
+}
+
+@keyframes load-effect {
+  0% {
+    box-shadow:
+      0 -3em 0 .2em #FFF,/*上*/
+      2em -2em 0 0 #FFF,/*右上*/
+      3em 0 0 -.5em #FFF,/*右*/
+      2em 2em 0 -.5em #FFF,/*右下*/
+      0 3em 0 -.5em #FFF, /*下*/
+      -2em 2em 0 -.5em #FFF, /*左下*/
+      -3em 0 0 -.5em #FFF, /*左*/
+      -2em -2em 0 0 #FFF;/*左上*/
+    }
+  12.5% {
+    box-shadow:
+      0 -3em 0 0 #FFF,
+      2em -2em 0 .2em #FFF,
+      3em 0 0 0 #FFF,
+      2em 2em 0 -.5em #FFF,
+      0 3em 0 -.5em #FFF,
+      -2em 2em 0 -.5em #FFF,
+      -3em 0 0 -.5em #FFF,
+      -2em -2em 0 -.5em #FFF;
+    }
+  25% {
+    box-shadow:
+      0 -3em 0 -.5em #FFF,
+      2em -2em 0 0 #FFF,
+      3em 0 0 .2em #FFF,
+      2em 2em 0 0 #FFF,
+      0 3em 0 -.5em #FFF,
+      -2em 2em 0 -.5em #FFF,
+      -3em 0 0 -.5em #FFF,
+      -2em -2em 0 -.5em #FFF;
+    }
+  37.5% {
+    box-shadow:
+      0 -3em 0 -.5em #FFF,
+      2em -2em 0 -.5em #FFF,
+      3em 0 0 0 #FFF,
+      2em 2em 0 .2em #FFF,
+      0 3em 0 0 #FFF,
+      -2em 2em 0 -.5em #FFF,
+      -3em 0 0 -.5em #FFF,
+      -2em -2em 0 -.5em #FFF;
+    }
+  50% {
+    box-shadow:
+      0 -3em 0 -.5em #FFF,
+      2em -2em 0 -.5em #FFF,
+      3em 0 0 -.5em #FFF,
+      2em 2em 0 0 #FFF,
+      0 3em 0 .2em #FFF,
+      -2em 2em 0 0 #FFF,
+      -3em 0 0 -.5em #FFF,
+      -2em -2em 0 -.5em #FFF;
+    }
+  62.5% {
+    box-shadow:
+      0 -3em 0 -.5em #FFF,
+      2em -2em 0 -.5em #FFF,
+      3em 0 0 -.5em #FFF,
+      2em 2em 0 -.5em #FFF,
+      0 3em 0 0 #FFF,
+      -2em 2em 0 .2em #FFF,
+      -3em 0 0 0 #FFF,
+      -2em -2em 0 -.5em #FFF;
+    }
+    75% {
+    box-shadow:
+      0 -3em 0 -.5em #FFF,
+      2em -2em 0 -.5em #FFF,
+      3em 0 0 -.5em #FFF,
+      2em 2em 0 -.5em #FFF,
+      0 3em 0 -.5em #FFF,
+      -2em 2em 0 0 #FFF,
+      -3em 0 0 .2em #FFF,
+      -2em -2em 0 0 #FFF;
+    }
+    87.5% {
+    box-shadow:
+      0 -3em 0 0 #FFF,
+      2em -2em 0 -.5em #FFF,
+      3em 0 0 -.5em #FFF,
+      2em 2em 0 -.5em #FFF,
+      0 3em 0 -.5em #FFF,
+      -2em 2em 0 0 #FFF,
+      -3em 0 0 0 #FFF,
+      -2em -2em 0 .2em #FFF;
+    }
+  100% {
+    box-shadow:
+      0 -3em 0 .2em #FFF,
+      2em -2em 0 0 #FFF,
+      3em 0 0 -.5em #FFF,
+      2em 2em 0 -.5em #FFF,
+      0 3em 0 -.5em #FFF,
+      -2em 2em 0 -.5em #FFF,
+      -3em 0 0 -.5em #FFF,
+      -2em -2em 0 0 #FFF;
+    }
+}
