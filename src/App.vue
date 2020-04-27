@@ -19,7 +19,7 @@
         <van-icon
           class="play"
           @click="play"
-          :name="playing ? 'play-circle-o' : 'pause-circle-o'" size="24px"
+          :name="playing ? 'pause-circle-o' : 'play-circle-o'" size="24px"
         />
       </div>
       <div class="times">
@@ -153,7 +153,7 @@ export default {
       let {riseTime, setTime, dayLength} = utils.getSunTime(utils.deg2rad(this.lon), utils.deg2rad(this.lat), this.date, 8, 'hh:mm')
       this.riseTimeStr = riseTime
       this.setTimeStr = setTime
-      this.dayLengthStr = utils.timeFormat(dayLength, 'hh h m min').replace(/\s+/g, '')
+      this.dayLengthStr = utils.timeFormat(dayLength, 'h h m min').replace(/\s+/g, '')
     }
   }
 }
@@ -177,8 +177,10 @@ export default {
   .bottom-card {
     position: absolute;
     bottom: 16px;
-    left: 4vw;
+    left: 50%;
+    transform: translateX(-50%);
     width: 92vw;
+    max-width: 600px;
     background: rgba(255, 255, 255, 0.8);
     border-radius: 6px;
     padding: 12px;
