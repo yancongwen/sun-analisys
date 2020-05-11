@@ -7,17 +7,21 @@ const isDev = process.env.NODE_ENV !== 'production'
 
 export default class Sun {
   constructor(options) {
-    const {lon, lat, date, time, dev, element} = options
+    const { lon, lat, date, time, dev, element, baseMap } = options
     this._isDev = dev && isDev // 在开发环境显示辅助线
     this._element = element // canvas 元素
     this._lon = utils.deg2rad(lon) // 经度弧度
     this._lat = utils.deg2rad(lat) // 纬度弧度
     this._date = date // 日期
     this._time = time // 时间（数字）
+    this._baseMap = baseMap
     this._R = 3000 // 太阳轨迹半径
   }
 
   init() {
+    if (this._scene) {
+      return
+    }
     this._currentRotateRad = 0
     this._sunLightHeightRad = utils.getSunLightHeightRad(this._lat, this._date) // 正午时刻太阳高度角
     this._noonTimeNum = utils.getSunTime(this._lon, this._lat, this._date).noonTimeNum // 日中天时间（数字）
@@ -28,7 +32,6 @@ export default class Sun {
     this._initControl()
     this._addSun()
     this._addBasePlane()
-    this._addBuildings()
     // this._addSkyBox()
     if (this._isDev) {
       this._addHelper()
@@ -40,6 +43,62 @@ export default class Sun {
     }
     this._render()
     this._rotate()
+  }
+
+  // 添加建筑物，参数为geojson格式的对象
+  addBuildings(data, name) {
+    const group = new THREE.Group()
+    group.name = name
+    data.features.forEach(feature => {
+      let points = feature.geometry.coordinates[0].map(point => {
+        return [point[0], 0, -point[1]]
+      })
+      let building = this._creatBuilding(points, feature.properties.height * 8, feature.properties.name)
+      group.add(building)
+    })
+    this._scene.add(group)
+  }
+
+  destroy() {
+    console.log('destroy')
+    if (this._scene) {
+      let children = this._scene.children
+      children.forEach(item => {
+        if (item.type === 'Group') {
+          this._removeGroup(item)
+        } else if (item.type === 'Mesh') {
+          this._removeMesh(item)
+        } else if (item instanceof THREE.Light) {
+          this._scene.remove(item)
+        }
+      })
+    }
+  }
+
+  _removeMesh(mesh) {
+    if (mesh.type === 'Mesh') {
+      mesh.geometry.dispose()
+      if (Array.isArray(mesh.material)) {
+        mesh.material.forEach(item => {
+          item.map && item.map.dispose()
+          item.dispose()
+        })
+      } else {
+        mesh.material.dispose()
+      }
+      this._scene.remove(mesh)
+    }
+  }
+
+  _removeGroup(group) {
+    if (group.type === 'Group') {
+      group.traverse(item => {
+        if (item.type === 'Mesh') {
+          this._removeMesh(item)
+        }
+      })
+      this._scene.remove(group)
+    }
   }
 
   set date(value) {
@@ -71,6 +130,8 @@ export default class Sun {
     rotateAboutWorldAxis(this._sunMesh, earthAxisVector3, -rotateRad)
     rotateAboutWorldAxis(this._directionalLight, earthAxisVector3, -rotateRad)
     this._currentRotateRad = targetRoateRad
+    // 环境光强度也要稍微调整一下
+    this._ambientLight.intensity = 0.6
   }
 
   _render() {
@@ -110,7 +171,7 @@ export default class Sun {
       0.1,
       50000
     )
-    camera.position.set(0, 1600, -2400)
+    camera.position.set(0, 1600, 1600)
     camera.lookAt(this._scene.position)
     this._camera = camera
   }
@@ -136,6 +197,7 @@ export default class Sun {
 
     this._scene.add(ambientLight)
     this._scene.add(directionalLight)
+    this._ambientLight = ambientLight
     this._directionalLight = directionalLight
   }
 
@@ -214,8 +276,8 @@ export default class Sun {
 
   // 地平面
   _addBasePlane() {
-    const planeGeometry = new THREE.PlaneGeometry(1000, 1000)
-    const groundTexture = new THREE.TextureLoader().load('./images/map.jpg')
+    const planeGeometry = new THREE.PlaneGeometry(1024, 1024)
+    const groundTexture = new THREE.TextureLoader().load(this._baseMap)
     const planeMaterial = new THREE.MeshLambertMaterial({
       map: groundTexture
     })
@@ -223,39 +285,41 @@ export default class Sun {
     planeMesh.name = '地图平面'
     planeMesh.rotateX(-Math.PI / 2)
     planeMesh.receiveShadow = true
+    planeMesh.castShadow = true
     this._scene.add(planeMesh)
   }
 
   // 建筑
-  _addBuildings() {
-    const points = [
-      [0, 0, 0],
-      [100, 0, 0],
-      [100, 0, 100],
-      [0, 0, 100]
-    ]
-    const geometry = getGeometry(points, 300)
-    // var texture = new THREE.TextureLoader().load('./static/images/map.jpg')
+  _creatBuilding(points, height, name) {
+    points.reverse()
+    const geometry = getGeometry(points, height)
+    // var texture = new THREE.TextureLoader().load(this._baseMap)
+    // texture.wrapS = THREE.RepeatWrapping
+    // texture.wrapT = THREE.RepeatWrapping
+    // texture.repeat.set(4, 4)
     const materialArr = [
+      // 侧面
+      new THREE.MeshLambertMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.96,
+        // map: texture,
+        side: THREE.BackSide
+      }),
+      // 楼顶
       new THREE.MeshLambertMaterial({
         color: 0xeeeeee,
         transparent: true,
-        opacity: 0.98,
-        side: THREE.BackSide
-      }),
-      new THREE.MeshLambertMaterial({
-        color: 0xcccccc,
-        transparent: true,
-        opacity: 0.98,
+        opacity: 0.96,
         side: THREE.BackSide
       })
     ]
-    const facematerial = new THREE.MeshFaceMaterial(materialArr)
-    const mesh = new THREE.Mesh(geometry, facematerial)
-    mesh.name = '建筑'
+    // const facematerial = new THREE.MeshFaceMaterial(materialArr)
+    const mesh = new THREE.Mesh(geometry, materialArr)
+    mesh.name = name
     mesh.castShadow = true
     mesh.receiveShadow = true
-    this._scene.add(mesh)
+    return mesh
   }
 
   _onWindowResize() {
@@ -335,6 +399,14 @@ function getGeometry(points, height) {
   geometry.faces = faces
   geometry.computeFaceNormals() //自动计算法向量
   // geometry.faceVertexUvs[1] = geometry.faceVertexUvs[0]
+  // 纹理坐标
+  // var t0 = new THREE.Vector2(0, 0)
+  // var t1 = new THREE.Vector2(1, 0)
+  // var t2 = new THREE.Vector2(1, 1)
+  // var t3 = new THREE.Vector2(0, 1)
+  // var uv1 = [t0, t1, t2]
+  // var uv2 = [t2, t3, t0]
+  // geometry.faceVertexUvs[0].push(uv1, uv2)
   return geometry
 }
 

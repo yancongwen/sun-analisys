@@ -1,7 +1,7 @@
 /**
  * 将 Date 转化为指定格式的String
  */
-function dateFormat(date, fmt) {
+export function dateFormat(date, fmt) {
   var o = {
     'M+': date.getMonth() + 1,
     'd+': date.getDate(),
@@ -29,7 +29,7 @@ function dateFormat(date, fmt) {
 }
 
 // 时间转换
-function timeFormat(value, fmt = 'hh:mm') {
+export function timeFormat(value, fmt = 'hh:mm') {
   let h = Math.floor(value)
   let m = Math.floor(value * 60 - h * 60)
   let s = Math.floor(value * 60 * 60 - h * 60 * 60 - m * 60)
@@ -50,7 +50,7 @@ function timeFormat(value, fmt = 'hh:mm') {
 }
 
 // 获取当年已过去的天数
-function getDays(date, decimal) {
+export function getDays(date, decimal) {
   let year = date.getFullYear()
   let date0 = new Date(year + '/01/01')
   let days = (Date.parse(date) - date0) / (24 * 60 * 60 * 1000) + 1
@@ -58,7 +58,7 @@ function getDays(date, decimal) {
 }
 
 // 计算赤纬（单位为弧度）
-function getDeclination(date) {
+export function getDeclination(date) {
   let n = getDays(date)
   let b = (2 * Math.PI * (n - 1)) / 365
   let result =
@@ -73,20 +73,20 @@ function getDeclination(date) {
 }
 
 // 计算正午时刻太阳高度角（单位为弧度）
-function getSunLightHeightRad(lat, date) {
+export function getSunLightHeightRad(lat, date) {
   const declination = getDeclination(date)
   return Math.PI / 2 - lat + declination
 }
 
 // 计算昼长
-function getDayLength(date, lat) {
+export function getDayLength(date, lat) {
   let d = getDeclination(date)
   let result = 24 - (24 * Math.acos(Math.tan(d) * Math.tan(lat))) / Math.PI
   return result
 }
 
 // 计算日出时间、日落时间、正午时间、昼长等
-function getSunTime(lon, lat, date, zone = 8, fmt = 'hh:mm:ss') {
+export function getSunTime(lon, lat, date, zone = 8, fmt = 'hh:mm:ss') {
   let dayLength = getDayLength(date, lat) // 昼长
   let centerLon = deg2rad(15 * zone) // 时区中央经线
   let noonTimeNum = 12 + rad2deg(centerLon - lon) / 15 // 日中天时间
@@ -97,17 +97,17 @@ function getSunTime(lon, lat, date, zone = 8, fmt = 'hh:mm:ss') {
 }
 
 // 角度转弧度
-function deg2rad(deg) {
+export function deg2rad(deg) {
   return (Math.PI * deg) / 180
 }
 
 // 弧度转角度
-function rad2deg(rad) {
+export function rad2deg(rad) {
   return (rad * 180) / Math.PI
 }
 
 // 角度转度分秒字符串
-function deg2str(deg) {
+export function deg2str(deg) {
   let value = Math.abs(deg)
   var v1 = Math.floor(value)
   var v2 = Math.floor((value - v1) * 60)
@@ -120,7 +120,7 @@ function deg2str(deg) {
 }
 
 // 弧度转度分秒字符串
-function rad2str(rad) {
+export function rad2str(rad) {
   return deg2str(rad2deg(rad))
 }
 

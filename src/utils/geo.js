@@ -5,12 +5,12 @@ var a = 6378245.0
 var ee = 0.00669342162296594323
 
 /**
- * 百度坐标系 (BD-09) 与 火星坐标系 (GCJ-02)的转换
+ * BD-09 => GCJ-02
  * @param bd_lon
  * @param bd_lat
  * @returns {*[]}
  */
-function bd09togcj02(bd_lon, bd_lat) {
+export function bd2gcj(bd_lon, bd_lat) {
   var x = bd_lon - 0.0065
   var y = bd_lat - 0.006
   var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_PI)
@@ -21,12 +21,12 @@ function bd09togcj02(bd_lon, bd_lat) {
 }
 
 /**
- * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换
+ * GCJ-02 => BD-09
  * @param lng
  * @param lat
  * @returns {*[]}
  */
-function gcj02tobd09(lng, lat) {
+export function gcj2bd(lng, lat) {
   var z = Math.sqrt(lng * lng + lat * lat) + 0.00002 * Math.sin(lat * x_PI)
   var theta = Math.atan2(lat, lng) + 0.000003 * Math.cos(lng * x_PI)
   var bd_lng = z * Math.cos(theta) + 0.0065
@@ -35,12 +35,12 @@ function gcj02tobd09(lng, lat) {
 }
 
 /**
- * WGS84转GCj02
+ * WGS84 => GCj02
  * @param lng
  * @param lat
  * @returns {*[]}
  */
-function wgs84togcj02(lng, lat) {
+export function wgs2gcj(lng, lat) {
   if (out_of_china(lng, lat)) {
     return [lng, lat]
   } else {
@@ -59,12 +59,12 @@ function wgs84togcj02(lng, lat) {
 }
 
 /**
- * GCJ02 转换为 WGS84
+ * GCJ02 => WGS84
  * @param lng
  * @param lat
  * @returns {*[]}
  */
-function gcj02towgs84(lng, lat) {
+export function gcj2wgs(lng, lat) {
   if (out_of_china(lng, lat)) {
     return [lng, lat]
   } else {
@@ -137,4 +137,28 @@ function out_of_china(lng, lat) {
   return (
     lng < 72.004 || lng > 137.8347 || lat < 0.8293 || lat > 55.8271 || false
   )
+}
+
+
+/**
+ * WGS84 => web墨卡托
+ * 平面坐标x = 经度*20037508.34/108
+ * 平面坐标y = log（tan（（90+纬度）*PI/360））/（PI/360）*20037508.34/180
+ */
+export function lonlat2WebMercator(lon, lat) {
+  let xy = []
+  let x = lon * 20037508.34 / 180;
+  let y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
+  y = y * 20037508.34 / 180;
+  xy[0] = x;
+  xy[1] = y;
+  return (xy);
+}
+
+export default {
+  bd2gcj,
+  gcj2bd,
+  wgs2gcj,
+  gcj2wgs,
+  lonlat2WebMercator
 }

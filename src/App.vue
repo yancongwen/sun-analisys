@@ -46,17 +46,20 @@
 
 <script>
 import utils from './utils'
+import { wgs2gcj, lonlat2WebMercator } from './utils/geo'
 import Sun from './sun'
+import { error } from 'three'
 
-let sun = null
+const AMapKey = 'd0d18f5a3a5abeff6f97c818019b97eb'
 
+let sunView = null
 export default {
   data() {
     return {
-      lon: 116.3102867,
-      lat: 39.9838423,
+      lon: 116.311057,
+      lat: 39.982435,
       date: new Date(),
-      time: 0, // 0-24
+      time: 9, // 0-24
       riseTimeStr: '',
       setTimeStr: '',
       noonTimeStr: '',
@@ -105,34 +108,39 @@ export default {
   mounted() {
     this.date = new Date()
     this.getSunTime()
-    sun = new Sun({
+    sunView = new Sun({
       element: document.querySelector('#canvasRender'),
       lon: this.lon,
       lat: this.lat,
       date: this.date,
       time: this.time,
+      baseMap: `https://restapi.amap.com/v3/staticmap?location=${this.lon},${this.lat}&zoom=16&scale=1&size=1024*1024&key=${AMapKey}`,
       dev: false
     })
-    sun.init()
+    sunView.init()
+    this.loadBuildings()
     setTimeout(() => {
       this.loaded = true
-      this.play()
-    }, 3000)
+      // this.play()
+    }, 1000)
+  },
+  destroyed() {
+    sunView.destroy()
   },
   methods: {
     onChoseDate(val) {
       this.date = val
       this.showCalendar = false
       this.getSunTime()
-      sun.date = val
+      sunView.date = val
     },
     choseDate(dateStr) {
       this.date = new Date(dateStr)
       this.getSunTime()
-      sun.date = this.date
+      sunView.date = this.date
     },
     onTimeChange(val) {
-      sun.time = val
+      sunView.time = val
     },
     play() {
       this.playing = !this.playing
@@ -148,7 +156,7 @@ export default {
           if (this.time > 24) {
             this.time = 0
           }
-          sun.time = this.time
+          sunView.time = this.time
         }, 50)
       }
     },
@@ -157,6 +165,35 @@ export default {
       this.riseTimeStr = riseTime
       this.setTimeStr = setTime
       this.dayLengthStr = utils.timeFormat(dayLength, 'h h m min').replace(/\s+/g, '')
+    },
+    transformCoordinate(data) {
+      const center = lonlat2WebMercator(this.lon, this.lat)
+      // web 墨卡托投影有变形
+      const p = Math.cos(utils.deg2rad(this.lat))
+      data.features.forEach(feature => {
+        let coordinates = feature.geometry.coordinates
+        let newCoordinates = coordinates.map(ring => {
+          let newRing = []
+          ring.forEach(coordinate => {
+            const newCoordinate = lonlat2WebMercator(...wgs2gcj(...coordinate))
+            const x = Math.round((newCoordinate[0] - center[0]) * p * 100) / 100
+            const y = Math.round((newCoordinate[1] - center[1]) * p * 100) / 100
+            newRing.push([x, y])
+          })
+          return newRing
+        })
+        feature.geometry.coordinates = newCoordinates
+      })
+    },
+    async loadBuildings() {
+      let data = await fetch('./data/test.json').then(response => {
+        return response.json()
+      }).catch(console.error)
+      // 坐标转换
+      if (data && data.features && data.features.length) {
+        this.transformCoordinate(data)
+        sunView && sunView.addBuildings(data)
+      }
     }
   }
 }
