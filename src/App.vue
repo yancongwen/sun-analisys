@@ -4,43 +4,64 @@
     <div class="bottom-card">
       <div class="top">
         <h4 class="title">狐厂家园</h4>
-        <div class="date" @click="showCalendar=true">
-          <span class="text">{{dateStr}}</span>
+        <div class="date" @click="showCalendar = true">
+          <span class="text">{{ dateStr }}</span>
           <van-icon name="arrow" />
         </div>
       </div>
       <div class="time-wrapper">
         <div class="time-slider">
           <span class="time">00:00</span>
-          <van-slider v-model="time" @change="onTimeChange" :min="0" :max="24" :step="0.0001" button-size="14px"/>
+          <van-slider
+            v-model="time"
+            @change="onTimeChange"
+            :min="0"
+            :max="24"
+            :step="0.0001"
+            button-size="14px"
+          />
           <span class="time">24:00</span>
-          <span class="current-time">{{timeStr}}</span>
+          <span class="current-time">{{ timeStr }}</span>
         </div>
         <van-icon
           class="play"
           @click="play"
-          :name="playing ? 'pause-circle-o' : 'play-circle-o'" size="24px"
+          :name="playing ? 'pause-circle-o' : 'play-circle-o'"
+          size="24px"
         />
       </div>
       <div class="times">
-        <p>日出时间<span class="value">{{riseTimeStr}}</span></p>
-        <p>日落时间<span class="value">{{setTimeStr}}</span></p>
-        <p>昼长<span class="value">{{dayLengthStr}}</span></p>
+        <p>
+          日出时间<span class="value">{{ riseTimeStr }}</span>
+        </p>
+        <p>
+          日落时间<span class="value">{{ setTimeStr }}</span>
+        </p>
+        <p>
+          昼长<span class="value">{{ dayLengthStr }}</span>
+        </p>
       </div>
       <div class="dates">
         <van-button
           class="btn"
-          :class="{active: dateStr === item.date}"
+          :class="{ active: dateStr === item.date }"
           plain
           size="mini"
           type="default"
           v-for="item in dates"
           :key="item.date"
-          @click="choseDate(item.date)">{{item.name}}</van-button>
+          @click="choseDate(item.date)"
+          >{{ item.name }}</van-button
+        >
       </div>
     </div>
     <div class="loading" v-if="!loaded"></div>
-    <van-calendar v-model="showCalendar" :min-date="minDate" :max-date="maxDate" @confirm="onChoseDate" />
+    <van-calendar
+      v-model="showCalendar"
+      :min-date="minDate"
+      :max-date="maxDate"
+      @confirm="onChoseDate"
+    />
   </div>
 </template>
 
@@ -48,7 +69,6 @@
 import utils from './utils'
 import { wgs2gcj, lonlat2WebMercator } from './utils/geo'
 import Sun from './sun'
-import { error } from 'three'
 
 const AMapKey = 'd0d18f5a3a5abeff6f97c818019b97eb'
 
@@ -161,10 +181,18 @@ export default {
       }
     },
     getSunTime() {
-      let {riseTime, setTime, dayLength} = utils.getSunTime(utils.deg2rad(this.lon), utils.deg2rad(this.lat), this.date, 8, 'hh:mm')
+      let { riseTime, setTime, dayLength } = utils.getSunTime(
+        utils.deg2rad(this.lon),
+        utils.deg2rad(this.lat),
+        this.date,
+        8,
+        'hh:mm'
+      )
       this.riseTimeStr = riseTime
       this.setTimeStr = setTime
-      this.dayLengthStr = utils.timeFormat(dayLength, 'h h m min').replace(/\s+/g, '')
+      this.dayLengthStr = utils
+        .timeFormat(dayLength, 'h h m min')
+        .replace(/\s+/g, '')
     },
     transformCoordinate(data) {
       const center = lonlat2WebMercator(this.lon, this.lat)
@@ -186,9 +214,11 @@ export default {
       })
     },
     async loadBuildings() {
-      let data = await fetch('./data/test.json').then(response => {
-        return response.json()
-      }).catch(console.error)
+      let data = await fetch('./data/test.json')
+        .then(response => {
+          return response.json()
+        })
+        .catch(console.error)
       // 坐标转换
       if (data && data.features && data.features.length) {
         this.transformCoordinate(data)
@@ -292,7 +322,11 @@ export default {
       .active {
         border: none;
         color: #fff;
-        background: linear-gradient(90deg, rgba(255, 102, 102, 1) 0%, rgba(255, 34, 34, 1) 100%);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 102, 102, 1) 0%,
+          rgba(255, 34, 34, 1) 100%
+        );
       }
     }
   }

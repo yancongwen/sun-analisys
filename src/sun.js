@@ -24,7 +24,11 @@ export default class Sun {
     }
     this._currentRotateRad = 0
     this._sunLightHeightRad = utils.getSunLightHeightRad(this._lat, this._date) // 正午时刻太阳高度角
-    this._noonTimeNum = utils.getSunTime(this._lon, this._lat, this._date).noonTimeNum // 日中天时间（数字）
+    this._noonTimeNum = utils.getSunTime(
+      this._lon,
+      this._lat,
+      this._date
+    ).noonTimeNum // 日中天时间（数字）
     this._initRender()
     this._initScene()
     this._initCamera()
@@ -53,7 +57,11 @@ export default class Sun {
       let points = feature.geometry.coordinates[0].map(point => {
         return [point[0], 0, -point[1]]
       })
-      let building = this._creatBuilding(points, feature.properties.height * 8, feature.properties.name)
+      let building = this._creatBuilding(
+        points,
+        feature.properties.height * 8,
+        feature.properties.name
+      )
       group.add(building)
     })
     this._scene.add(group)
@@ -73,6 +81,14 @@ export default class Sun {
         }
       })
     }
+    this._scene.dispose()
+    this._render.dispose()
+    this._scene = null
+    this._renderer = null
+    this._camera = null
+    this._control = null
+    this._ambientLight = null
+    this._directionalLight = null
   }
 
   _removeMesh(mesh) {
@@ -92,7 +108,7 @@ export default class Sun {
 
   _removeGroup(group) {
     if (group.type === 'Group') {
-      group.traverse(item => {
+      group.children.forEach(item => {
         if (item.type === 'Mesh') {
           this._removeMesh(item)
         }
@@ -124,7 +140,7 @@ export default class Sun {
 
   // 根据当前时间旋转太阳和光照（绕着地轴转）
   _rotate() {
-    const targetRoateRad = Math.PI * (this._time - this._noonTimeNum) / 12
+    const targetRoateRad = (Math.PI * (this._time - this._noonTimeNum)) / 12
     const rotateRad = targetRoateRad - this._currentRotateRad
     const earthAxisVector3 = new THREE.Vector3(0, Math.tan(this._lat), -1) // 地轴方向向量
     rotateAboutWorldAxis(this._sunMesh, earthAxisVector3, -rotateRad)
@@ -154,6 +170,7 @@ export default class Sun {
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setClearColor(0xb9d3ff, 1)
     renderer.shadowMap.enabled = true
+    // renderer.shadowMap.type = THREE.PCFSoftShadowMap
     // document.body.appendChild(renderer.domElement)
     this._renderer = renderer
   }
