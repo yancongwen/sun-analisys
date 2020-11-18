@@ -76,8 +76,8 @@ let sunView = null
 export default {
   data() {
     return {
-      lon: 116.311057,
-      lat: 39.982435,
+      lon: CONFIG.lon,
+      lat: CONFIG.lat,
       date: new Date(),
       time: 9, // 0-24
       riseTimeStr: '',
@@ -141,7 +141,7 @@ export default {
     this.loadBuildings()
     setTimeout(() => {
       this.loaded = true
-      // this.play()
+      this.play()
     }, 1000)
   },
   destroyed() {
@@ -194,6 +194,7 @@ export default {
         .timeFormat(dayLength, 'h h m min')
         .replace(/\s+/g, '')
     },
+
     transformCoordinate(data) {
       const center = lonlat2WebMercator(this.lon, this.lat)
       // web 墨卡托投影有变形
@@ -213,8 +214,9 @@ export default {
         feature.geometry.coordinates = newCoordinates
       })
     },
+
     async loadBuildings() {
-      let data = await fetch('./data/test.json')
+      let data = await fetch('./data/xj.json')
         .then(response => {
           return response.json()
         })

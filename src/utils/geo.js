@@ -76,8 +76,8 @@ export function gcj2wgs(lng, lat) {
     var sqrtmagic = Math.sqrt(magic)
     dlat = (dlat * 180.0) / (((a * (1 - ee)) / (magic * sqrtmagic)) * PI)
     dlng = (dlng * 180.0) / ((a / sqrtmagic) * Math.cos(radlat) * PI)
-    mglat = lat + dlat
-    mglng = lng + dlng
+    var mglat = lat + dlat
+    var mglng = lng + dlng
     return [lng * 2 - mglng, lat * 2 - mglat]
   }
 }
@@ -139,20 +139,19 @@ function out_of_china(lng, lat) {
   )
 }
 
-
 /**
  * WGS84 => web墨卡托
- * 平面坐标x = 经度*20037508.34/108
+ * 平面坐标x = 经度*20037508.34/180
  * 平面坐标y = log（tan（（90+纬度）*PI/360））/（PI/360）*20037508.34/180
  */
 export function lonlat2WebMercator(lon, lat) {
   let xy = []
-  let x = lon * 20037508.34 / 180;
-  let y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
-  y = y * 20037508.34 / 180;
-  xy[0] = x;
-  xy[1] = y;
-  return (xy);
+  let x = (lon * 20037508.34) / 180
+  let y = Math.log(Math.tan(((90 + lat) * Math.PI) / 360)) / (Math.PI / 180)
+  y = (y * 20037508.34) / 180
+  xy[0] = x
+  xy[1] = y
+  return xy
 }
 
 export default {

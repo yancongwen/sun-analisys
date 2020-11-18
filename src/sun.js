@@ -15,7 +15,7 @@ export default class Sun {
     this._date = date // 日期
     this._time = time // 时间（数字）
     this._baseMap = baseMap
-    this._R = 3000 // 太阳轨迹半径
+    this._R = 2000 // 太阳轨迹半径
   }
 
   init() {
@@ -55,11 +55,11 @@ export default class Sun {
     group.name = name
     data.features.forEach(feature => {
       let points = feature.geometry.coordinates[0].map(point => {
-        return [point[0], 0, -point[1]]
+        return [point[0], 0.1, -point[1]]
       })
       let building = this._creatBuilding(
         points,
-        feature.properties.height * 8,
+        feature.properties.height * 6,
         feature.properties.name
       )
       group.add(building)
@@ -310,10 +310,10 @@ export default class Sun {
   _creatBuilding(points, height, name) {
     points.reverse()
     const geometry = getGeometry(points, height)
-    // var texture = new THREE.TextureLoader().load(this._baseMap)
-    // texture.wrapS = THREE.RepeatWrapping
-    // texture.wrapT = THREE.RepeatWrapping
-    // texture.repeat.set(4, 4)
+    var texture = new THREE.TextureLoader().load(this._baseMap)
+    texture.wrapS = THREE.RepeatWrapping
+    texture.wrapT = THREE.RepeatWrapping
+    texture.repeat.set(4, 4)
     const materialArr = [
       // 侧面
       new THREE.MeshLambertMaterial({
@@ -359,12 +359,12 @@ export default class Sun {
 // 传入一个坐标串和高度，返回一个 Geometry
 function getGeometry(points, height) {
   var topPoints = []
-  for (var i = 0; i < points.length; i++) {
+  for (let i = 0; i < points.length; i++) {
     topPoints.push([points[i][0], points[i][1] + height, points[i][2]])
   }
   var totalPoints = points.concat(topPoints)
   var vertices = []
-  for (var i = 0; i < totalPoints.length; i++) {
+  for (let i = 0; i < totalPoints.length; i++) {
     vertices.push(
       new THREE.Vector3(totalPoints[i][0], totalPoints[i][1], totalPoints[i][2])
     )
@@ -372,7 +372,7 @@ function getGeometry(points, height) {
   var length = points.length
   var faces = []
   //侧面生成三角形
-  for (var j = 0; j < length; j++) {
+  for (let j = 0; j < length; j++) {
     if (j != length - 1) {
       faces.push(new THREE.Face3(j, j + 1, length + j + 1))
       faces.push(new THREE.Face3(length + j + 1, length + j, j))
@@ -382,12 +382,12 @@ function getGeometry(points, height) {
     }
   }
   var data = []
-  for (var i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     data.push(points[i][0], points[i][2])
   }
   var triangles = Earcut(data)
   if (triangles && triangles.length != 0) {
-    for (var i = 0; i < triangles.length; i++) {
+    for (let i = 0; i < triangles.length; i++) {
       var tlength = triangles.length
       if (i % 3 == 0 && i < tlength - 2) {
         //底部的三角面
