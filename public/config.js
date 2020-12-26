@@ -1,6 +1,6 @@
 const config = {
   lon: 116.311057,
-  lat: 43.78903795998767
+  lat: 39.982435
 }
 
 window.CONFIG = config

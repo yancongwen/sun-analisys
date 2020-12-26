@@ -216,7 +216,7 @@ export default {
     },
 
     async loadBuildings() {
-      let data = await fetch('./data/xj.json')
+      let data = await fetch('./data/test.json')
         .then(response => {
           return response.json()
         })
