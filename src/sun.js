@@ -175,6 +175,7 @@ export default class Sun {
     let renderer = new THREE.WebGLRenderer({
       canvas: this._element,
       antialias: true, // 抗锯齿
+      logarithmicDepthBuffer: true, // 是否使用对数深度缓存
       alpha: true // 透明度
     })
     renderer.setSize(window.innerWidth, window.innerHeight)
