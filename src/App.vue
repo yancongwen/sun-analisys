@@ -141,7 +141,7 @@ export default {
     this.loadBuildings()
     setTimeout(() => {
       this.loaded = true
-      this.play()
+      // this.play()
     }, 1000)
   },
   destroyed() {
@@ -332,5 +332,25 @@ export default {
       }
     }
   }
+}
+
+.css2DLabel {
+	position:relative;
+	padding: 0px 5px;
+	font-size: 10px;
+  font-weight: 600;
+	line-height: 12px;
+	border-radius: 2px;
+	color: #fff;
+	&:after {
+		content: '';
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		width: 1px;
+		height: 16px;
+		border: none;
+		background: linear-gradient(180deg,rgba(255,255,255,1) 0%,rgba(255,255,255,0) 80%);
+	}
 }
 </style>

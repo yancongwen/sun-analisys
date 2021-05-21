@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer"
 import Stats from 'stats.js'
 import Earcut from 'earcut'
 import utils from './utils'
@@ -87,6 +88,7 @@ export default class Sun {
     this._render.dispose()
     this._scene = null
     this._renderer = null
+    this._labelRenderer = null
     this._camera = null
     this._control = null
     this._ambientLight = null
@@ -154,9 +156,14 @@ export default class Sun {
 
   _render() {
     this._renderer.render(this._scene, this._camera)
+		this._labelRenderer.render(this._scene, this._camera)
     this._control.update()
     this._stats && this._stats.update()
     this._directionalLightHelper && this._directionalLightHelper.update()
+    //根据当前的位置计算与z轴负方向的夹角，即为正北方方向
+    var direction = new THREE.Vector3(-this._camera.position.x, 0, -this._camera.position.z).normalize()
+    var theta = Math.atan2(-direction.x, -direction.z)
+    console.log(theta)
     requestAnimationFrame(() => {
       this._render()
     })
@@ -175,6 +182,14 @@ export default class Sun {
     // renderer.shadowMap.type = THREE.PCFSoftShadowMap
     // document.body.appendChild(renderer.domElement)
     this._renderer = renderer
+    // CSS2DRenderer
+    let labelRenderer = new CSS2DRenderer()
+    labelRenderer.setSize(window.innerWidth, window.innerHeight)
+		labelRenderer.domElement.style.position = 'absolute'
+		labelRenderer.domElement.style.top = '0'
+		labelRenderer.domElement.style.pointerEvents = 'none'
+		document.body.appendChild(labelRenderer.domElement)
+		this._labelRenderer = labelRenderer
   }
 
   _initScene() {
@@ -317,13 +332,18 @@ export default class Sun {
     for (let i = 0; i < height; i++) {
       group.add(this._creatBuildingFloor(points, i))
     }
+
+    // 计算中心点坐标
+    const center = computeCenter(points)
+    // 添加 label
+    const label = this._creatLabel(name, [center[0], height * this._floorHeight + 20, center[1]])
+    group.add(label)
     return group
   }
 
   // 创建楼层
   _creatBuildingFloor(points, index) {
     const color = this._floorColors[index % 2]
-    console.log(color, index % 2)
     const geometry = getGeometry(points, this._floorHeight * index, this._floorHeight)
     const materialArr = [
       // 侧面
@@ -349,10 +369,24 @@ export default class Sun {
     return mesh
   }
 
+  _creatLabel(title, position) {
+    const div = document.createElement('div')
+    div.className = 'css2DLabel'
+    div.textContent = title
+    const label = new CSS2DObject(div)
+    label.position.copy({
+      x: position[0],
+      y: position[1],
+      z: position[2]
+    })
+    return label
+  }
+
   _onWindowResize() {
     this._camera.aspect = window.innerWidth / window.innerHeight
     this._camera.updateProjectionMatrix()
     this._renderer.setSize(window.innerWidth, window.innerHeight)
+    this._labelRenderer.setSize(window.innerWidth, window.innerHeight)
   }
 
   // WebGL 性能监测器
@@ -453,4 +487,44 @@ function rotateAboutWorldAxis(object, axis, angle) {
   object.position.x = newPos.x
   object.position.y = newPos.y
   object.position.z = newPos.z
+}
+
+// 计算多边形中心点坐标
+function computeCenter(points) {
+  var count = points.length
+  var x = 0
+  var y = 0
+  var f
+  var j = count - 1
+  var p1
+  var p2
+
+  for (var i = 0; i < count; j = i++) {
+    p1 = points[i]
+    p2 = points[j]
+    f = p1[0] * p2[2] - p2[0] * p1[2]
+    x += (p1[0] + p2[0]) * f
+    y += (p1[2] + p2[2]) * f
+  }
+
+  f = computeArea(points) * 6
+  return [x / f, y / f]
+}
+
+function computeArea(points) {
+  var area = 0
+  var count = points.length
+  var j = count - 1
+  var p1
+  var p2
+
+  for (var i = 0; i < count; j = i++) {
+      p1 = points[i]
+      p2 = points[j]
+      area += p1[0] * p2[2]
+      area -= p1[2] * p2[0]
+  }
+  area /= 2
+
+  return area
 }
