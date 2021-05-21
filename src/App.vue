@@ -3,7 +3,7 @@
     <canvas id="canvasRender"></canvas>
     <div class="bottom-card">
       <div class="top">
-        <h4 class="title">新科祥园</h4>
+        <h4 class="title">旗胜家园</h4>
         <div class="date" @click="showCalendar = true">
           <span class="text">{{ dateStr }}</span>
           <van-icon name="arrow" />
@@ -139,8 +139,8 @@ export default {
       lat: this.lat,
       date: this.date,
       time: this.time,
-      baseMap: './images/base.png',
-      // baseMap: `https://restapi.amap.com/v3/staticmap?location=${this.lon},${this.lat}&zoom=16&scale=1&size=1024*1024&key=${AMapKey}`,
+      // baseMap: './images/base.png',
+      baseMap: `https://restapi.amap.com/v3/staticmap?location=${this.lon},${this.lat}&zoom=16&scale=1&size=1024*1024&key=${AMapKey}`,
       onRotate: this.throttledHandleRotateChange,
       dev: false
     })
@@ -223,7 +223,7 @@ export default {
     },
 
     async loadBuildings() {
-      let data = await fetch('./data/xinkexiangyuan.json')
+      let data = await fetch('./data/qishengjiayuan.json')
         .then(response => {
           return response.json()
         })
@@ -264,6 +264,7 @@ export default {
     transform: translateX(-50%);
     width: 92vw;
     max-width: 600px;
+    z-index: 999;
     background: rgba(255, 255, 255, 0.8);
     border-radius: 6px;
     padding: 12px;
@@ -359,7 +360,7 @@ export default {
 }
 
 .css2DLabel {
-	position:relative;
+	position: relative;
 	padding: 0px 5px;
 	font-size: 10px;
 	line-height: 16px;

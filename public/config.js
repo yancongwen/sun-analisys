@@ -4,8 +4,8 @@
 // }
 
 const config = {
-  lon: 116.323712565105,
-  lat: 39.982746853299
+  lon: 116.359648980035,
+  lat: 40.067844238282
 }
 
 window.CONFIG = config

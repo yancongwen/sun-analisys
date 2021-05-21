@@ -40,7 +40,7 @@ export default class Sun {
     this._initControl()
     this._addSun()
     this._addBasePlane()
-    this._addSkyBox()
+    // this._addSkyBox()
     if (this._isDev) {
       this._addHelper()
       this._addEarthAxis()
