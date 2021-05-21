@@ -40,7 +40,7 @@ export default class Sun {
     this._initControl()
     this._addSun()
     this._addBasePlane()
-    // this._addSkyBox()
+    this._addSkyBox()
     if (this._isDev) {
       this._addHelper()
       this._addEarthAxis()
@@ -285,14 +285,14 @@ export default class Sun {
   // 天空盒
   _addSkyBox() {
     this._scene.background = new THREE.CubeTextureLoader()
-      .setPath('./static/images/')
+      .setPath('/images/')
       .load([
-        'sky_px.jpg',
-        'sky_nx.jpg',
-        'sky_py.jpg',
-        'sky_ny.jpg',
-        'sky_pz.jpg',
-        'sky_nz.jpg'
+        'center.png',
+        'center.png',
+        'top.png',
+        'down.png',
+        'center.png',
+        'center.png'
       ])
   }
 
