@@ -8,7 +8,7 @@ const isDev = process.env.NODE_ENV !== 'production'
 
 export default class Sun {
   constructor(options) {
-    const { lon, lat, date, time, dev, element, baseMap } = options
+    const { lon, lat, date, time, dev, element, baseMap, onRotate } = options
     this._isDev = dev && isDev // 在开发环境显示辅助线
     this._element = element // canvas 元素
     this._lon = utils.deg2rad(lon) // 经度弧度
@@ -19,6 +19,7 @@ export default class Sun {
     this._R = 2000 // 太阳轨迹半径
     this._floorHeight = 6 // 单层楼的高度
     this._floorColors = [0xffffff, 0xefefef]
+    this._onRotate = onRotate
   }
 
   init() {
@@ -162,8 +163,9 @@ export default class Sun {
     this._directionalLightHelper && this._directionalLightHelper.update()
     //根据当前的位置计算与z轴负方向的夹角，即为正北方方向
     var direction = new THREE.Vector3(-this._camera.position.x, 0, -this._camera.position.z).normalize()
+    // 弧度值
     var theta = Math.atan2(-direction.x, -direction.z)
-    console.log(theta)
+    this._onRotate && this._onRotate(theta)
     requestAnimationFrame(() => {
       this._render()
     })

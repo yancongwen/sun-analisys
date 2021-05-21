@@ -124,7 +124,47 @@ export function rad2str(rad) {
   return deg2str(rad2deg(rad))
 }
 
+
+// 函数防抖
+export function debounce(fn, delay) {
+  let timer = null
+  return function() {
+      let context = this
+      let args = arguments
+      timer && clearTimeout(timer)
+      timer = setTimeout(() => {
+          fn.apply(context, args)
+      }, delay)
+  }
+}
+
+// 函数节流（最后一次也执行）
+export function throttle(fn, delay) {
+  let lastTime = null
+  let timeout
+  return function() {
+      let context = this
+      let now = new Date()
+      let arg = arguments
+      if (now - lastTime - delay > 0) {
+          if (timeout) {
+              clearTimeout(timeout)
+              timeout = null
+          }
+          fn.apply(context, arg)
+          lastTime = now
+      } else {
+          clearTimeout(timeout)
+          timeout = setTimeout(() => {
+              fn.apply(context, arg)
+          }, delay)
+      }
+  }
+}
+
 export default {
+  debounce,
+  throttle,
   dateFormat,
   timeFormat,
   getDays,

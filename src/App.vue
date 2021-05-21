@@ -62,6 +62,9 @@
       :max-date="maxDate"
       @confirm="onChoseDate"
     />
+    <div class="compass">
+      <img class="icon" src="/images/compass.png" :style="{transform: 'rotate(' + rotateValue + 'deg)'}">
+    </div>
   </div>
 </template>
 
@@ -89,6 +92,7 @@ export default {
       showCalendar: false,
       playing: false,
       loaded: false,
+      rotateValue: 0,
       dates: [
         {
           name: '大寒',
@@ -126,6 +130,7 @@ export default {
     }
   },
   mounted() {
+    this.throttledHandleRotateChange = utils.throttle(this.handleRotateChange, 200)
     this.date = new Date()
     this.getSunTime()
     sunView = new Sun({
@@ -135,6 +140,7 @@ export default {
       date: this.date,
       time: this.time,
       baseMap: `https://restapi.amap.com/v3/staticmap?location=${this.lon},${this.lat}&zoom=16&scale=1&size=1024*1024&key=${AMapKey}`,
+      onRotate: this.throttledHandleRotateChange,
       dev: false
     })
     sunView.init()
@@ -226,6 +232,10 @@ export default {
         this.transformCoordinate(data)
         sunView && sunView.addBuildings(data)
       }
+    },
+
+    handleRotateChange(value) {
+      this.rotateValue = value * 180 / Math.PI
     }
   }
 }
@@ -330,6 +340,19 @@ export default {
           rgba(255, 34, 34, 1) 100%
         );
       }
+    }
+  }
+  .compass {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    // background: rgba(255,255,255, 0.2);
+    font-size: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    .icon {
+      width: 80px;
+      height: 80px;
     }
   }
 }
