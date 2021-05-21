@@ -17,7 +17,7 @@ export default class Sun {
     this._time = time // 时间（数字）
     this._baseMap = baseMap
     this._R = 2000 // 太阳轨迹半径
-    this._floorHeight = 6 // 单层楼的高度
+    this._floorHeight = 4 // 单层楼的高度
     this._floorColors = [0xffffff, 0xefefef]
     this._onRotate = onRotate
   }
@@ -208,7 +208,7 @@ export default class Sun {
       0.1,
       50000
     )
-    camera.position.set(0, 1600, 1600)
+    camera.position.set(0, 800, 800)
     camera.lookAt(this._scene.position)
     this._camera = camera
   }
@@ -285,7 +285,7 @@ export default class Sun {
   // 天空盒
   _addSkyBox() {
     this._scene.background = new THREE.CubeTextureLoader()
-      .setPath('/images/')
+      .setPath('./images/')
       .load([
         'center.png',
         'center.png',
@@ -316,6 +316,10 @@ export default class Sun {
     const planeGeometry = new THREE.PlaneGeometry(1024, 1024)
     const groundTexture = new THREE.TextureLoader().load(this._baseMap)
     const planeMaterial = new THREE.MeshLambertMaterial({
+      // lightMapIntensity: 0,
+      // emissiveIntensity: 0,
+      // color: null,
+      transparent: true,
       map: groundTexture
     })
     const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)

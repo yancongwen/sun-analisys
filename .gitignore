@@ -2,6 +2,7 @@
 node_modules
 /dist
 /temp
+/test
 
 # local env files
 .env.local

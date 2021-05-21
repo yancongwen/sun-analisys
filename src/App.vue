@@ -3,7 +3,7 @@
     <canvas id="canvasRender"></canvas>
     <div class="bottom-card">
       <div class="top">
-        <h4 class="title">狐厂家园</h4>
+        <h4 class="title">新科祥园</h4>
         <div class="date" @click="showCalendar = true">
           <span class="text">{{ dateStr }}</span>
           <van-icon name="arrow" />
@@ -63,7 +63,7 @@
       @confirm="onChoseDate"
     />
     <div class="compass">
-      <img class="icon" src="/images/compass.png" :style="{transform: 'rotate(' + rotateValue + 'deg)'}">
+      <img class="icon" src="./assets/compass.png" :style="{transform: 'rotate(' + rotateValue + 'deg)'}">
     </div>
   </div>
 </template>
@@ -139,7 +139,8 @@ export default {
       lat: this.lat,
       date: this.date,
       time: this.time,
-      baseMap: `https://restapi.amap.com/v3/staticmap?location=${this.lon},${this.lat}&zoom=16&scale=1&size=1024*1024&key=${AMapKey}`,
+      baseMap: './images/base.png',
+      // baseMap: `https://restapi.amap.com/v3/staticmap?location=${this.lon},${this.lat}&zoom=16&scale=1&size=1024*1024&key=${AMapKey}`,
       onRotate: this.throttledHandleRotateChange,
       dev: false
     })
@@ -147,7 +148,7 @@ export default {
     this.loadBuildings()
     setTimeout(() => {
       this.loaded = true
-      // this.play()
+      this.play()
     }, 1000)
   },
   destroyed() {
@@ -222,7 +223,7 @@ export default {
     },
 
     async loadBuildings() {
-      let data = await fetch('./data/test.json')
+      let data = await fetch('./data/xinkexiangyuan.json')
         .then(response => {
           return response.json()
         })
@@ -361,10 +362,11 @@ export default {
 	position:relative;
 	padding: 0px 5px;
 	font-size: 10px;
-  font-weight: 600;
-	line-height: 12px;
+	line-height: 16px;
 	border-radius: 2px;
 	color: #fff;
+  padding: 1px 5px;
+  background: rgba(0, 0, 0, 0.4);
 	&:after {
 		content: '';
 		position: absolute;
