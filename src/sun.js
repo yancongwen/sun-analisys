@@ -16,6 +16,8 @@ export default class Sun {
     this._time = time // 时间（数字）
     this._baseMap = baseMap
     this._R = 2000 // 太阳轨迹半径
+    this._floorHeight = 6 // 单层楼的高度
+    this._floorColors = [0xffffff, 0xefefef]
   }
 
   init() {
@@ -59,7 +61,7 @@ export default class Sun {
       })
       let building = this._creatBuilding(
         points,
-        feature.properties.height * 6,
+        feature.properties.height,
         feature.properties.name
       )
       group.add(building)
@@ -308,32 +310,40 @@ export default class Sun {
 
   // 建筑
   _creatBuilding(points, height, name) {
+    const group = new THREE.Group()
+    group.name = name
     points.reverse()
-    const geometry = getGeometry(points, height)
-    var texture = new THREE.TextureLoader().load(this._baseMap)
-    texture.wrapS = THREE.RepeatWrapping
-    texture.wrapT = THREE.RepeatWrapping
-    texture.repeat.set(4, 4)
+    // 分层创建
+    for (let i = 0; i < height; i++) {
+      group.add(this._creatBuildingFloor(points, i))
+    }
+    return group
+  }
+
+  // 创建楼层
+  _creatBuildingFloor(points, index) {
+    const color = this._floorColors[index % 2]
+    console.log(color, index % 2)
+    const geometry = getGeometry(points, this._floorHeight * index, this._floorHeight)
     const materialArr = [
       // 侧面
       new THREE.MeshLambertMaterial({
-        color: 0xffffff,
+        color: color,
         transparent: true,
-        opacity: 0.96,
-        // map: texture,
+        opacity: 1,
         side: THREE.BackSide
       }),
-      // 楼顶
+      // 顶部
       new THREE.MeshLambertMaterial({
         color: 0xeeeeee,
         transparent: true,
-        opacity: 0.96,
+        opacity: 1,
         side: THREE.BackSide
       })
     ]
     // const facematerial = new THREE.MeshFaceMaterial(materialArr)
     const mesh = new THREE.Mesh(geometry, materialArr)
-    mesh.name = name
+    mesh.index = index
     mesh.castShadow = true
     mesh.receiveShadow = true
     return mesh
@@ -357,12 +367,14 @@ export default class Sun {
 }
 
 // 传入一个坐标串和高度，返回一个 Geometry
-function getGeometry(points, height) {
+function getGeometry(points, baseHeight, floorHeight) {
   var topPoints = []
-  for (let i = 0; i < points.length; i++) {
-    topPoints.push([points[i][0], points[i][1] + height, points[i][2]])
+  let basePoints = JSON.parse(JSON.stringify(points))
+  for (let i = 0; i < basePoints.length; i++) {
+    basePoints[i][1] = baseHeight
+    topPoints.push([basePoints[i][0], baseHeight + floorHeight, basePoints[i][2]])
   }
-  var totalPoints = points.concat(topPoints)
+  var totalPoints = basePoints.concat(topPoints)
   var vertices = []
   for (let i = 0; i < totalPoints.length; i++) {
     vertices.push(
